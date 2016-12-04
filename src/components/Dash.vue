@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
   <div class="wrapper">
     <header class="main-header">
       <a href="/" class="logo">
@@ -7,7 +7,7 @@
         <!-- logo for regular state and mobile devices -->
         <div class="container logo-lg">
           <div class="pull-left image"><img src="/static/img/logo_sm.png" alt="Logo" class="img-responsive"></div>
-          <div class="pull-left info">CoPilot</div>
+          <div class="pull-left info">ArbaByte</div>
         </div>
       </a>
 
@@ -60,17 +60,15 @@
               <ul class="dropdown-menu">
                 <li class="header">You have {{ state.userInfo.notifications | count }} notification(s)</li>
                 <li v-if="state.userInfo.notifications.length > 0">
-                  <!-- Inner Menu: contains the notifications -->
                   <ul class="menu">
-                    <li><!-- start notification -->
-                      <a href="javascript:;">
-                        <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                    <li v-for="notification in state.userInfo.notifications">
+                      <a href="#">
+                        <i class="fa fa-users text-aqua"></i> {{ notification.data }}
                       </a>
                     </li>
-                    <!-- end notification -->
                   </ul>
                 </li>
-                <li class="footer" v-if="state.userInfo.notifications.length > 0"><a href="javascript:;">View all</a></li>
+                <li class="footer" v-if="state.userInfo.notifications.length > 0"><a @click="markRead()" href="javascript:;">Mark as read</a></li>
               </ul>
             </li>
 
@@ -114,9 +112,9 @@
             <li class="dropdown user user-menu">
               <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                 <!-- The user image in the navbar-->
-                <img v-bind:src=demo.avatar class="user-image" alt="User Image">
+                <img v-bind:src=state.userInfo.avatar class="user-image" alt="User Image">
                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                <span class="hidden-xs">{{ demo.displayName }}</span>
+                <span class="hidden-xs">{{ state.userInfo.user.name }}</span>
               </a>
             </li>
           </ul>
@@ -135,7 +133,7 @@
 
           </div>
           <div class="pull-left info">
-            <div><p class="white">{{ demo.displayName }}</p></div>
+            <div><p class="white">{{ state.userInfo.user.name }}</p></div>
             <a href="javascript:;"><i class="fa fa-circle text-success"></i> Online</a>
           </div>
         </div>
@@ -186,7 +184,7 @@
         </h1>
         <ol class="breadcrumb">
           <li><a href="javascript:;"><i class="fa fa-home"></i>Home</a></li>
-          <li class="active">{{$route.name.toUpperCase() }}</li>
+          <li class="active">{{ $route.name.toUpperCase() }}</li>
         </ol>
       </section>
 
@@ -196,14 +194,13 @@
 
     <!-- Main Footer -->
     <footer class="main-footer">
-      <strong>Copyright &copy; {{year}} <a href="javascript:;">CoPilot</a>.</strong> All rights reserved.
+      <strong>Copyright &copy; {{year}} <a href="javascript:;">ArmaByte</a>.</strong> All rights reserved.
     </footer>
   </div>
   <!-- ./wrapper -->
 </template>
 
 <script>
-import faker from 'faker'
 require('hideseek')
 
 module.exports = {
@@ -231,14 +228,6 @@ module.exports = {
     callAPI: function () {
       return this.$parent.callAPI
     },
-    demo: function () {
-      return {
-        displayName: faker.name.findName(),
-        avatar: faker.image.avatar(),
-        email: faker.internet.email(),
-        randomCard: faker.helpers.createCard()
-      }
-    },
     year: function () {
       var y = new Date()
       return y.getFullYear()
@@ -254,6 +243,18 @@ module.exports = {
 
       // Add it to the item that was clicked
       event.toElement.parentElement.className = 'pageLink active'
+    },
+    getNotifications: function () {
+      this.$http.get('notifications')
+      .then((response) => {
+        this.store.commit('UPDATE_NOTIFICATIONS', response.data)
+      })
+    },
+    markRead: function () {
+      this.$http.get('notifications/read')
+      .then(response => {
+        this.getNotifications()
+      })
     }
   },
   mounted: function () {

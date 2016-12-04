@@ -32,6 +32,7 @@
               </div>
               <br />
 
+
               <!-- with icons from font awesome -->
               <h4>With icons</h4>
               <div class="input-group">

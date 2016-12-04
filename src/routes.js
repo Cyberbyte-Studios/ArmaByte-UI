@@ -4,7 +4,8 @@ import NotFoundView from './components/404.vue'
 
 // Import Views - Dash
 import DashboardView from './components/dash/Dashboard.vue'
-import TablesView from './components/dash/Tables.vue'
+// import TablesView from './components/dash/Tables.vue'
+import TablesView from './components/armalife/Players.vue'
 import TasksView from './components/dash/Tasks.vue'
 import SettingView from './components/dash/Setting.vue'
 import AccessView from './components/dash/Access.vue'

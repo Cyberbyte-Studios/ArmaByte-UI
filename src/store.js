@@ -7,24 +7,34 @@ const state = {
   callingAPI: false,
   searching: '',
   serverURI: 'http://localhost',
-  user: null,
   token: null,
   userInfo: {
-    messages: [{1: 'test', 2: 'test'}],
+    messages: [],
     notifications: [],
-    tasks: []
+    tasks: [],
+    user: {
+      id: 1,
+      name: 'Logging In',
+      email: 'Logging In',
+      steam_id: 'Logging In'
+    }
   }
 }
 
 const mutations = {
+  UPDATE_USERINFO (state, userinfo) {
+    state.userInfo.user = userinfo.user
+    state.userInfo.audits = userinfo.audits.data
+    state.userInfo.notifications = userinfo.notifications
+  },
+  UPDATE_NOTIFICATIONS (state, notifications) {
+    state.userInfo.notifications = notifications
+  },
   TOGGLE_LOADING (state) {
     state.callingAPI = !state.callingAPI
   },
   TOGGLE_SEARCHING (state) {
     state.searching = (state.searching === '') ? 'loading' : ''
-  },
-  SET_USER (state, user) {
-    state.user = user
   },
   SET_TOKEN (state, token) {
     state.token = token

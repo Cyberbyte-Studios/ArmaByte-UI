@@ -3,11 +3,6 @@
   <section class='content'>
     <!-- Info boxes -->
     <div class='row'>
-      <div class="alert alert-success alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-        <h4><i class="icon fa fa-check"></i> CoPilot is open source!</h4>
-        Click on icon to check out it out on github. <a href='https://github.com/misterGF/CoPilot' target='_blank'><i class='fa fa-github fa-2x'></i></a>
-      </div>
       <div class='col-md-3 col-sm-6 col-xs-12'>
         <div class='info-box'>
           <span class='info-box-icon bg-aqua'><i class='ion ion-ios-gear-outline'></i></span>
@@ -195,7 +190,17 @@ module.exports = {
       return this.generateRandomNumbers(12, 1000000, 10000)
     }
   },
+  methods: {
+    getDashboardStats: function () {
+      this.$http.get('armalife/dashboard').then((response) => {
+        console.log(response)
+      }, (response) => {
+        console.log('Unable to get dashboard data', response)
+      })
+    }
+  },
   mounted: function () {
+    this.getDashboardStats()
     this.$nextTick(function () {
       var ctx = document.getElementById('trafficBar').getContext('2d')
       var config = {
@@ -239,7 +244,7 @@ module.exports = {
       var pieConfig = {
         type: 'pie',
         data: {
-          labels: ['HTML', 'JavaScript', 'CSS'],
+          labels: ['Civilian', 'Cop', 'Medic'],
           datasets: [{
             data: [56.6, 37.7, 4.1],
             backgroundColor: ['#00a65a', '#f39c12', '#00c0ef'],

@@ -17,6 +17,7 @@
     <orderEntry type="module-library">
       <library name="PHP" type="php">
         <CLASSES>
+          <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/laravel-cors" />
           <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/laravel-debugbar" />
           <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/laravel-ide-helper" />
           <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/reflection-docblock" />
@@ -119,6 +120,7 @@
           <root url="file://$MODULE_DIR$/../../armabyte/vendor/zendframework/zend-diactoros" />
         </CLASSES>
         <SOURCES>
+          <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/laravel-cors" />
           <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/laravel-debugbar" />
           <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/laravel-ide-helper" />
           <root url="file://$MODULE_DIR$/../../armabyte/vendor/barryvdh/reflection-docblock" />

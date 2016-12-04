@@ -24,20 +24,8 @@ Vue.use(Resource)
 
 Vue.use(VueRouter)
 
-Vue.http.interceptors.push((request, next) => {
-  /*
-    Enable this when you have a backend that you authenticate against
-  var headers = request.headers
-
-  if (window.location.pathname !== '/login' && !headers.hasOwnProperty('Authorization')) {
-    headers.Authorization = this.$store.state.token
-  }
-  */
-  // console.log(headers)
-
-  // continue to next interceptor without modifying the response
-  next()
-})
+Vue.http.options.root = 'http://localhost/api'
+Vue.http.headers.common['Authorization'] = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImZlZjNhMTcyNzAwODVhNmM5MDU0YjI0ZWQ2MGM5MTJmMjk1MWUzODc0Zjc4MDI4NGI1NjZkYjdjYWM4NGNjMWQ5NGYxNTRkZDhhYzYxZDQ4In0.eyJhdWQiOiIxIiwianRpIjoiZmVmM2ExNzI3MDA4NWE2YzkwNTRiMjRlZDYwYzkxMmYyOTUxZTM4NzRmNzgwMjg0YjU2NmRiN2NhYzg0Y2MxZDk0ZjE1NGRkOGFjNjFkNDgiLCJpYXQiOjE0Nzk2NTA3MzcsIm5iZiI6MTQ3OTY1MDczNywiZXhwIjoxNTExMTg2NzM3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.nW49UHxO9vOrBhyru9elExizsmyamm6UrO9nTeg5APm0XmW_gF5hzq8y6RZbreT32qRfU0GUPugz3nVznTYK-tJoWAH7AbLdqTsr0pXWSgJPEviyQjqzzCI8XJmVicvpRBIu8MN1ME9qPtPQegHQsToMhxo-q23HPqXLQluFHVQwFiNUqArj5tyu-OjBznCu-hfMj72o2LbiVJhiVKDH381WDaPctRvjpdLrc74F45yfQhiMojYha0lny5kOjK7ClV0syguXYmHIwnfNWNCTVnOIAVT4qIqb3JCygnHn3M7879DffN8PQ4la4CtYQB8U2-xQNWmJnfmZUPiJWggdYkC1YhNVREATM5n0f9IQ9Sz6dBUWdDyknJqvRzhsPIHWMQZWCs3ZIELm3G5efC_APZ_dyAoykVpwmX_VqDYtn-aRQAcHF4oQx0lVwKnu6uIPO_XQrEoNS8cyvcIvFGkGuyHOgUoegXLDJHX9TJgbyp6TkxipQaFMZSlAzXNz32Mit-9jDwXnIYNjaj-d1dMlBrVdE1vn7csiLJBN65kUyXA51ucu1UyxFoEfs6ej7Xs0PNS33cYt4bfi9-KsNWRzA6v41vNqsCtRwPm3L_4LyLk2heeaD2QIAEbuFXhZFLL1YU6Ca2S95a-GxXX3c8QUWS0K-vc6L9NtrgoD2U5ZtlE'
 
 // Routing logic
 var router = new VueRouter({
@@ -45,20 +33,6 @@ var router = new VueRouter({
   mode: 'history',
   scrollBehavior: function (to, from, savedPosition) {
     return savedPosition || { x: 0, y: 0 }
-  }
-})
-
-// Some middleware to help us ensure the user is authenticated.
-router.beforeEach((to, from, next) => {
-  // window.console.log('Transition', transition)
-  if (to.auth && (to.router.app.$store.state.token === 'null')) {
-    window.console.log('Not authenticated')
-    next({
-      path: '/login',
-      query: { redirect: to.fullPath }
-    })
-  } else {
-    next()
   }
 })
 
@@ -72,9 +46,22 @@ new Vue({
 })
 
 // Check local storage to handle refreshes
-if (window.localStorage) {
-  if (store.state.user !== window.localStorage.getItem('user')) {
-    store.dispatch('SET_USER', JSON.parse(window.localStorage.getItem('user')))
-    store.dispatch('SET_TOKEN', window.localStorage.getItem('token'))
+// if (window.localStorage) {
+//   if (store.state.user !== window.localStorage.getItem('user')) {
+//     store.dispatch('SET_USER', JSON.parse(window.localStorage.getItem('user')))
+//     store.dispatch('SET_TOKEN', window.localStorage.getItem('token'))
+//   }
+// }
+
+Vue.http.get('userinfo').then((response) => {
+  store.commit('UPDATE_USERINFO', response.body)
+  store.dispatch('SET_TOKEN', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImZlZjNhMTcyNzAwODVhNmM5MDU0YjI0ZWQ2MGM5MTJmMjk1MWUzODc0Zjc4MDI4NGI1NjZkYjdjYWM4NGNjMWQ5NGYxNTRkZDhhYzYxZDQ4In0.eyJhdWQiOiIxIiwianRpIjoiZmVmM2ExNzI3MDA4NWE2YzkwNTRiMjRlZDYwYzkxMmYyOTUxZTM4NzRmNzgwMjg0YjU2NmRiN2NhYzg0Y2MxZDk0ZjE1NGRkOGFjNjFkNDgiLCJpYXQiOjE0Nzk2NTA3MzcsIm5iZiI6MTQ3OTY1MDczNywiZXhwIjoxNTExMTg2NzM3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.nW49UHxO9vOrBhyru9elExizsmyamm6UrO9nTeg5APm0XmW_gF5hzq8y6RZbreT32qRfU0GUPugz3nVznTYK-tJoWAH7AbLdqTsr0pXWSgJPEviyQjqzzCI8XJmVicvpRBIu8MN1ME9qPtPQegHQsToMhxo-q23HPqXLQluFHVQwFiNUqArj5tyu-OjBznCu-hfMj72o2LbiVJhiVKDH381WDaPctRvjpdLrc74F45yfQhiMojYha0lny5kOjK7ClV0syguXYmHIwnfNWNCTVnOIAVT4qIqb3JCygnHn3M7879DffN8PQ4la4CtYQB8U2-xQNWmJnfmZUPiJWggdYkC1YhNVREATM5n0f9IQ9Sz6dBUWdDyknJqvRzhsPIHWMQZWCs3ZIELm3G5efC_APZ_dyAoykVpwmX_VqDYtn-aRQAcHF4oQx0lVwKnu6uIPO_XQrEoNS8cyvcIvFGkGuyHOgUoegXLDJHX9TJgbyp6TkxipQaFMZSlAzXNz32Mit-9jDwXnIYNjaj-d1dMlBrVdE1vn7csiLJBN65kUyXA51ucu1UyxFoEfs6ej7Xs0PNS33cYt4bfi9-KsNWRzA6v41vNqsCtRwPm3L_4LyLk2heeaD2QIAEbuFXhZFLL1YU6Ca2S95a-GxXX3c8QUWS0K-vc6L9NtrgoD2U5ZtlE')
+
+  if (window.localStorage) {
+    window.localStorage.setItem('token', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImZlZjNhMTcyNzAwODVhNmM5MDU0YjI0ZWQ2MGM5MTJmMjk1MWUzODc0Zjc4MDI4NGI1NjZkYjdjYWM4NGNjMWQ5NGYxNTRkZDhhYzYxZDQ4In0.eyJhdWQiOiIxIiwianRpIjoiZmVmM2ExNzI3MDA4NWE2YzkwNTRiMjRlZDYwYzkxMmYyOTUxZTM4NzRmNzgwMjg0YjU2NmRiN2NhYzg0Y2MxZDk0ZjE1NGRkOGFjNjFkNDgiLCJpYXQiOjE0Nzk2NTA3MzcsIm5iZiI6MTQ3OTY1MDczNywiZXhwIjoxNTExMTg2NzM3LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.nW49UHxO9vOrBhyru9elExizsmyamm6UrO9nTeg5APm0XmW_gF5hzq8y6RZbreT32qRfU0GUPugz3nVznTYK-tJoWAH7AbLdqTsr0pXWSgJPEviyQjqzzCI8XJmVicvpRBIu8MN1ME9qPtPQegHQsToMhxo-q23HPqXLQluFHVQwFiNUqArj5tyu-OjBznCu-hfMj72o2LbiVJhiVKDH381WDaPctRvjpdLrc74F45yfQhiMojYha0lny5kOjK7ClV0syguXYmHIwnfNWNCTVnOIAVT4qIqb3JCygnHn3M7879DffN8PQ4la4CtYQB8U2-xQNWmJnfmZUPiJWggdYkC1YhNVREATM5n0f9IQ9Sz6dBUWdDyknJqvRzhsPIHWMQZWCs3ZIELm3G5efC_APZ_dyAoykVpwmX_VqDYtn-aRQAcHF4oQx0lVwKnu6uIPO_XQrEoNS8cyvcIvFGkGuyHOgUoegXLDJHX9TJgbyp6TkxipQaFMZSlAzXNz32Mit-9jDwXnIYNjaj-d1dMlBrVdE1vn7csiLJBN65kUyXA51ucu1UyxFoEfs6ej7Xs0PNS33cYt4bfi9-KsNWRzA6v41vNqsCtRwPm3L_4LyLk2heeaD2QIAEbuFXhZFLL1YU6Ca2S95a-GxXX3c8QUWS0K-vc6L9NtrgoD2U5ZtlE')
+    window.localStorage.setItem('user', JSON.stringify(response.body.user))
+    window.localStorage.setItem('audits', JSON.stringify(response.body.audits.data))
   }
-}
+}, (response) => {
+  console.log('Whoops login went wrong', response)
+})
