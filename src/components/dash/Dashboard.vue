@@ -76,9 +76,9 @@
             <hr class="visible-xs">
             <div class="col-sm-6 col-xs-12">
               <p class="text-center">
-                <strong>Language Overview</strong>
+                <strong>Player Sides</strong>
               </p>
-              <canvas id="languagePie"></canvas>
+              <player-side-chart :chartData="dashboard.sides"/>
             </div>
           </div>
         </div>
@@ -168,32 +168,38 @@
 </template>
 
 <script>
-import Chart from 'chart.js'
+import PlayerSideChart from '../charts/PlayerSideChart'
 
 module.exports = {
+  name: 'Dashboard',
   data: function () {
     return {
-      generateRandomNumbers: function (numbers, max, min) {
-        var a = []
-        for (var i = 0; i < numbers; i++) {
-          a.push(Math.floor(Math.random() * (max - min + 1)) + max)
+      dashboard: {
+        sides: {
+          labels: ['civ', 'cop', 'med'],
+          datasets: [{
+            label: 'thing',
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)'
+            ],
+            data: [10, 20, 30]
+          }]
         }
-        return a
       }
     }
   },
+  components: { PlayerSideChart },
   computed: {
-    coPilotNumbers: function () {
-      return this.generateRandomNumbers(12, 1000000, 10000)
-    },
     personalNumbers: function () {
-      return this.generateRandomNumbers(12, 1000000, 10000)
+      return [12, 1000000, 10000]
     }
   },
   methods: {
     getDashboardStats: function () {
       this.$http.get('armalife/dashboard').then((response) => {
-        console.log(response)
+        console.log(response.data)
       }, (response) => {
         console.log('Unable to get dashboard data', response)
       })
@@ -201,68 +207,6 @@ module.exports = {
   },
   mounted: function () {
     this.getDashboardStats()
-    this.$nextTick(function () {
-      var ctx = document.getElementById('trafficBar').getContext('2d')
-      var config = {
-        type: 'line',
-        data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-          datasets: [{
-            label: 'CoPilot',
-            fill: false,
-            borderColor: '#284184',
-            pointBackgroundColor: '#284184',
-            backgroundColor: 'rgba(0, 0, 0, 0)',
-            data: this.coPilotNumbers
-          }, {
-            label: 'Personal Site',
-            borderColor: '#4BC0C0',
-            pointBackgroundColor: '#4BC0C0',
-            backgroundColor: 'rgba(0, 0, 0, 0)',
-            data: this.personalNumbers
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          legend: {
-            position: 'bottom',
-            display: true
-          },
-          tooltips: {
-            mode: 'label',
-            xPadding: 10,
-            yPadding: 10,
-            bodySpacing: 10
-          }
-        }
-      }
-
-      new Chart(ctx, config) // eslint-disable-line no-new
-
-      var pieChartCanvas = document.getElementById('languagePie').getContext('2d')
-      var pieConfig = {
-        type: 'pie',
-        data: {
-          labels: ['Civilian', 'Cop', 'Medic'],
-          datasets: [{
-            data: [56.6, 37.7, 4.1],
-            backgroundColor: ['#00a65a', '#f39c12', '#00c0ef'],
-            hoverBackgroundColor: ['#00a65a', '#f39c12', '#00c0ef']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          legend: {
-            position: 'bottom',
-            display: true
-          }
-        }
-      }
-
-      new Chart(pieChartCanvas, pieConfig) // eslint-disable-line no-new
-    })
   }
 }
 </script>

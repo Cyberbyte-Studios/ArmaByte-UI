@@ -1,7 +1,7 @@
 <template>
   <section class="content">
     <div class="row center-block">
-      <h2>Data tables</h2>
+      <h2>Players</h2>
       <div class="col-md-12">
         <div class="box">
           <div class="box-header">
@@ -12,15 +12,15 @@
             <div class="dataTables_wrapper form-inline dt-bootstrap" id="example1_wrapper">
               <div class="row">
                 <div class="col-sm-6">
-                  <div id="example1_length" class="dataTables_length">
-
+                  <div id="players_length" class="dataTables_length">
+                    players
                   </div>
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-sm-12">
-                  <table aria-describedby="example1_info" role="grid" id="example1" class="table table-bordered table-striped dataTable">
+                  <table aria-describedby="players_info" role="grid" id="players" class="table table-bordered table-striped dataTable">
                     <thead>
                     <tr>
                       <th>life.player.uid</th>
@@ -63,7 +63,6 @@
 <script>
 import $ from 'jquery'
 
-// Require needed datatables modules
 require('datatables.net')
 require('datatables.net-bs')
 
@@ -71,7 +70,7 @@ module.exports = {
   name: 'Tables',
   mounted: function () {
     this.$nextTick(function () {
-      $('#example1').DataTable({
+      $('players').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
